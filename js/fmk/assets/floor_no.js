@@ -10,6 +10,5 @@ FloorNo.prototype.getNumbers = function(level){
     for(i=0; i< floorNoStr.length; i++){
         numbers.push( parseInt(floorNoStr[i]) );
     }
-    console.log(numbers);
     return numbers;
 }

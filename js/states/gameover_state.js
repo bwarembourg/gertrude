@@ -11,8 +11,9 @@ GameOverState.prototype.update = function() {
 GameOverState.prototype.reset = function() {
 };
 
-GameOverState.prototype.onKeyPressed = function() {
-    STATE_MANAGER.switchToState("game");
+GameOverState.prototype.onKeyPressed = function(e) {
+    if(e.which== 13)
+        STATE_MANAGER.switchToState("game");
 }
 
 GameOverState.prototype.onKeyUp = function(){

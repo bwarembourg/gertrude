@@ -24,70 +24,72 @@ function Hero(x, y){
 
 Hero.prototype.update = function(key, level){
     
-    
-    var newX = this.x; 
-    var newY = this.y;
+    if(!this.died){
+        var newX = this.x; 
+        var newY = this.y;
 
-    switch(key){
-        //LEFT
-        case 37 : 
-            this.moving = true;
-            this.goRight = false;
-            newX -= SPEED_X; 
-            break;
-        //RIGHT
-        case 39 : 
-            this.moving = true;
-            this.goRight = true;
-            newX += SPEED_X; 
-            break;
-        default: 
-            this.moving = false;
-            break;
-    }
-
-    var newY = this.getNewYJump();
-
-    //COLLIDES WITH WALLS
-    if(!this.collidesWWalls( newX, this.y, level )){
-        this.x = newX;
-    }
-
-    //PLATFORM AND JUMP STUFF
-    if( !this.collidesWPlatform( this.x, newY, level ) || 
-        this.jumpingUp ||
-        this.collidesPlatformFromBottom( this.x, newY, level )
-        ){
-
-        this.y = newY;
-    }
-    else{
-        this.jumping = false;
-        this.jumpingUp = true;
-        this.falling = false;
-    }
-
-    if(!this.isOnFloor( this.x, this.y, level) && !this.jumping){        
-        this.falling = true;
-        this.y += SPEED_JUMP;
-    }
-    
-    //COLLIDES WITH MONSTERS
-    if(this.hitted){
-        this.restCounter++;
-        if(this.restCounter>=REST_TIME){
-            this.hitted=false;
-            this.restCounter=0;
+        switch(key){
+            //LEFT
+            case 37 : 
+                this.moving = true;
+                this.goRight = false;
+                newX -= SPEED_X; 
+                break;
+            //RIGHT
+            case 39 : 
+                this.moving = true;
+                this.goRight = true;
+                newX += SPEED_X; 
+                break;
+            default: 
+                this.moving = false;
+                break;
         }
-    }
-    else{
-        level.collidesHero(this);
-    }
 
-    //COLLIDES WITH ITEM
-    level.collidesItem(this);
+        var newY = this.getNewYJump();
 
-    this.hitBox.update(this.x, this.y);
+        //COLLIDES WITH WALLS
+        if(!this.collidesWWalls( newX, this.y, level )){
+            this.x = newX;
+        }
+
+        //PLATFORM AND JUMP STUFF
+        if( !this.collidesWPlatform( this.x, newY, level ) || 
+            this.jumpingUp ||
+            this.collidesPlatformFromBottom( this.x, newY, level )
+            ){
+
+            this.y = newY;
+        }
+        else{
+            this.jumping = false;
+            this.jumpingUp = true;
+            this.falling = false;
+        }
+
+        if(!this.isOnFloor( this.x, this.y, level) && !this.jumping){        
+            this.falling = true;
+            this.y += SPEED_JUMP;
+        }
+        
+        //COLLIDES WITH MONSTERS
+        if(this.hitted){
+            this.restCounter++;
+            if(this.restCounter>=REST_TIME){
+                this.hitted=false;
+                this.restCounter=0;
+            }
+        }
+        else{
+            level.collidesHero(this);
+            level.collidesPics(this);
+        }
+
+        //COLLIDES WITH ITEM
+        level.collidesItem(this);
+
+        this.hitBox.update(this.x, this.y);
+    }
 }
 
 Hero.prototype.collidesWPlatform = function( x, y, level){
@@ -147,6 +149,21 @@ Hero.prototype.collides = function(x, y, block){
         return false;
     }
 }
+
+Hero.prototype.collidesPic = function(x, y, block){
+    if( x < block.x + BLOCK_WIDTH/2 &&
+        x + this.hitBox.width > block.x &&
+        y < block.y + BLOCK_HEIGHT/2 &&
+        y + this.hitBox.height > block.y +BLOCK_HEIGHT/2
+    ){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+
 
 Hero.prototype.isOnFloor = function(x, y, level){
     var y = this.y + HERO_HEIGHT + 10;

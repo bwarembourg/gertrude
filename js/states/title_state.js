@@ -14,8 +14,9 @@ TitleState.prototype.update = function() {
 
 };
 
-TitleState.prototype.onKeyPressed = function() {
-    STATE_MANAGER.switchToState("game");
+TitleState.prototype.onKeyPressed = function(e) {
+    if(e.which==13)
+        STATE_MANAGER.switchToState("game");
 }
 
 TitleState.prototype.onKeyUp = function(){

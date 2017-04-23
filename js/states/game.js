@@ -5,6 +5,7 @@ function Game() {
     this.levels = [];
     this.level = 0;
     this.transition = false;
+    this.screenshake = false;
 
     this.jumpReleased = true;
     this.hero = new Hero(MARGIN+BLOCK_WIDTH, 8*BLOCK_HEIGHT);
@@ -72,8 +73,8 @@ function Game() {
     this.music.loop = true;
     this.music.play();
 
-    this.generateNewLevel();
-    this.generateNewLevel();
+    this.generateNewLevel(false);
+    this.generateNewLevel(true);
     this.levels[ this.level +1 ].y = -BCK_HEIGHT;
 };
 
@@ -81,7 +82,18 @@ function Game() {
 // UPDATE
 //
 Game.prototype.update = function() {
-    if(this.transition){
+    var level = this.levels[ this.level ];
+
+    if(level.screenshake){
+        this.background.render(BCK_X, BCK_Y);
+        var ended = level.updateScreenshake( level.ssType );
+        this.drawSsLevel();
+
+        if(ended){
+            level.screenshake = false;
+        }
+    }
+    else if(this.transition){
         
 
         this.background.render(BCK_X, BCK_Y);
@@ -93,7 +105,7 @@ Game.prototype.update = function() {
         if(level.transitionFinished){
             this.transition = false;
             this.level++;
-            this.generateNewLevel();
+            this.generateNewLevel(true);
             this.levels[ this.level +1].y = -BCK_HEIGHT;
         }
 
@@ -204,6 +216,12 @@ Game.prototype.update = function() {
                 this.heroRightJump.render( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
             else
                 this.heroLeftJump.render( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
+        }
+
+        //PICS
+        for(var i=0; i< this.levels[this.level].pics.length; i++){
+            var pic = this.levels[this.level].pics[i];
+            this.pic.render(pic.x, pic.y);
         }
 
         //MONSTRES
@@ -322,7 +340,6 @@ Game.prototype.update = function() {
 };
 
 Game.prototype.onKeyPressed = function(e) {
-    console.log(e.which);
     //UP
     if(e.which == 38 && this.jumpReleased){
         if(!this.hero.jumping && !this.falling)
@@ -346,7 +363,6 @@ Game.prototype.onKeyUp = function(e) {
     else{
         this.jumpReleased = true;
     }
-    console.log("key : "+e.which);
 
 }
 
@@ -357,15 +373,18 @@ Game.prototype.reset = function() {
     this.hero = new Hero( MARGIN+BLOCK_WIDTH, 8*BLOCK_HEIGHT );
     this.levels = [];
     this.level = 0;
-    this.generateNewLevel();
-    this.generateNewLevel();
+    this.generateNewLevel(false);
+    this.generateNewLevel(true);
     this.levels[ this.level+1 ].y = -BCK_HEIGHT;
 };
 
-Game.prototype.generateNewLevel = function(){
+Game.prototype.generateNewLevel = function(next){
     this.hero = new Hero(MARGIN+BLOCK_WIDTH, 8*BLOCK_HEIGHT);
     var level = new Level();
-    level.init( this.level );
+    var noLevel = this.level;
+    if(next)
+        noLevel++;
+    level.init( noLevel );
     this.levels.push(level);
 }
 
@@ -413,4 +432,130 @@ Game.prototype.drawTransitionLevel = function(level, next){
             this.coffreOpenSprite.render( level.x + coffre.x, level.y + coffre.y  - BLOCK_HEIGHT );
         }
 
+        //PICS
+        for(var p=0; p<level.pics.length; p++){
+            var pic = level.pics[p];
+            this.pic.render(level.x + pic.x, level.y + pic.y );
+        }
+
+}
+
+Game.prototype.drawSsLevel = function(){
+
+        var level = this.levels[ this.level ];
+        this.backgroundLevel.render(level.x, level.y);
+
+        //BLOCKS
+        for(var i=0; i< level.grid.lines.length; i++){
+            for( var j=0; j< level.grid.lines[i].blocks.length; j++){
+                var x = MARGIN + level.x + j*BLOCK_WIDTH;
+                var y = level.y + i*BLOCK_HEIGHT;
+                switch( level.grid.lines[i].blocks[j].type ){
+                    case "corner_tl" : this.cornerTl.render( x, y ); break;
+                    case "roof": this.roof.render( x, y ); break;
+                    case "corner_tr" : this.cornerTr.render( x, y ); break;
+                    case "wall_left": this.wallLeft.render( x, y ); break;
+                    case "wall_right": this.wallRight.render( x, y ); break;
+                    case "corner_bl" : this.cornerBl.render( x, y); break;
+                    case "corner_br" : this.cornerBr.render( x, y); break;
+                    case "floor" : this.floor.render( x, y ); break;
+                    case "floor_begin" : this.floorBegin.render( x, y); break;
+                    case "floor_end" : this.floorEnd.render( x, y); break;
+                    case "platform_begin" : this.platformBegin.render( x, y ); break;
+                    case "platform_end" : this.platformEnd.render( x, y ); break;
+                    case "platform" : this.platform.render( x, y ); break;
+                    default: break;
+                }
+            }
+        }
+
+        //ITEM
+        if(level.button.pushed)
+            this.buttonPushedSprite.render( level.x + level.button.x, level.y + level.button.y);
+        else
+            this.buttonSprite.render( level.x + level.button.x, level.y + level.button.y);
+        
+        if(level.door.open)
+            this.doorOpenSprite.render( level.x + level.door.x, level.y + level.door.y - BLOCK_HEIGHT );
+        else
+            this.doorClosedSprite.render( level.x + level.door.x, level.y + level.door.y - BLOCK_HEIGHT );
+        
+        if(level.coffre.open )
+            this.coffreOpenSprite.render( level.x + level.coffre.x, level.y + level.coffre.y  - BLOCK_HEIGHT );
+        else if(level.coffre.visible)  
+            this.coffreSprite.render( level.x + level.coffre.x, level.y + level.coffre.y  - BLOCK_HEIGHT );
+        else{}
+
+        
+        if(level.key != null && level.key.visible)
+            this.keySprite.render( level.x + level.key.x, level.y + level.key.y - BLOCK_HEIGHT)
+
+        //PICS
+        for(var p=0; p<level.pics.length; p++){
+            var pic = level.pics[p];
+            this.pic.render(level.x + pic.x, level.y + pic.y );
+        }
+
+        //MONSTRES
+        for(var i=0; i< this.levels[this.level].monsters.length; i++){
+            var monster = this.levels[this.level].monsters[i];
+            monster.update(this.levels[this.level]);
+            if(monster.isSlime){
+                if(monster.hittedAnim && monster.hittable){
+                    var ended;
+                    if(monster.goRight)
+                        var ended = this.slimeRightHit.playOnce( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
+                    else
+                        var ended = this.slimeLeftHit.playOnce( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
+                    if(ended == 'N'){
+                        monster.hittedAnim = false;
+                    }
+                }
+                else if(monster.died){
+                    monster.hittable =false;
+                    if(monster.goRight)
+                        this.slimeRightDead.render( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
+                    else
+                        this.slimeLeftDead.render( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
+                }
+                else{
+                    if(monster.goRight)
+                        this.slimeRightWalk.play( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
+                    else
+                        this.slimeLeftWalk.play( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
+                }
+                
+            }
+            else{
+                if(monster.hittedAnim && monster.hittable){
+                    var ended;
+                    if(monster.goRight)
+                        var ended = this.skeletonRightHit.playOnce( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                    else
+                        var ended = this.skeletonLeftHit.playOnce( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                    if(ended == 'N'){
+                        monster.hittedAnim = false;
+                    }
+                }
+                else if(monster.died){
+                    monster.hittable = false;
+                    if(monster.goRight)
+                        this.skeletonRightDead.render( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                    else
+                        this.skeletonLeftDead.render( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                }
+                else{
+                    if( !monster.heroInSight ){
+                        this.skeletonSprite.render( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                    }
+                    else{
+                        if( monster.goRight )
+                            this.skeletonRightWalk.play(monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                        else   
+                            this.skeletonLeftWalk.play(monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                    }
+                }
+            }
+        }
+        
 }
