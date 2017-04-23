@@ -14,8 +14,56 @@ function Level(){
     this.finished = false;
 }
 
-Level.prototype.init = function(){
+Level.prototype.setDifficulty = function(level){
 
+    if(level<2){
+        NB_SLIMES = 1;
+        NB_PLATFORM = 6;
+        NB_HOLES = 2;
+    }
+    else if(level < 4){
+        NB_SLIMES = 3;
+        NB_PLATFORM = 4;
+        NB_HOLES = 3;
+    }
+    else if(level < 6){
+        NB_HOLES = 4;
+        NB_PLATFORM = 3;
+    }
+    else if(level < 8){
+        NB_HOLES = 5;
+        NB_PLATFORM = 5;
+        NB_SLIMES = 1;
+        NB_SKELETON = 1;
+    }
+    else if(level < 10){
+        NB_SLIMES = 3;
+    }
+    else if(level < 12){
+        NB_PLATFORM = 4;
+    }
+    else if(level < 14){
+        NB_SKELETON = 2;
+        NB_SLIME = 1;
+    }
+    else if(level < 16){
+        NB_SLIME =2;
+    }
+    else if(level < 18){
+        NB_SLIME = 3;
+    }
+    else if(level < 20){
+        NB_PLATFORM = 3;
+    }
+    else if(level < 22){
+        NB_HOLES = 5;
+    }
+
+}
+
+Level.prototype.init = function( level ){
+
+    this.setDifficulty(level);
     this.grid.init();
     this.nbFloors = this.grid.countBlocksWithFloor();
     for(k=0; k< NB_SLIMES; k++){
@@ -40,12 +88,12 @@ Level.prototype.placeMonster = function(slime){
         for(j=0; j< this.grid.lines[i].blocks.length; j++){
             var block = this.grid.lines[i].blocks[j];
             if(block.isFloor && !block.isPlayer && !block.hasMonster){
-                counter++;
                 if(counter==randPos){
                     x = block.x;
                     y = block.y - BLOCK_HEIGHT;
                     block.hasMonster = true;
                 }
+                counter++;
             }
         }
     }
@@ -62,7 +110,7 @@ Level.prototype.placeMonster = function(slime){
 Level.prototype.placeItem = function(type){
     
     if(type=="button")
-        var randPos = Math.ceil(Math.random() * (NB_PLATFORM));
+        var randPos = Math.ceil(Math.random() * (this.nbFloors)) -1;
     else
        var randPos = Math.ceil(Math.random() * (this.nbFloors)) -1;
 
@@ -73,11 +121,11 @@ Level.prototype.placeItem = function(type){
         for(j=0; j< this.grid.lines[i].blocks.length; j++){
             var block = this.grid.lines[i].blocks[j];
             if(block.isFloor && !block.isPlayer){
-                counter++;
                 if(counter==randPos){
                     x = block.x;
                     y = block.y - BLOCK_HEIGHT;
                 }
+                counter++;
             }
         }
     }
@@ -159,7 +207,7 @@ Level.prototype.collidesItem = function( hero ){
 Level.prototype.heroAttMonster = function( x, y){
     for(var l=0; l<this.monsters.length; l++){
         var monster = this.monsters[l];
-        if( x >= monster.x && x <= monster.x + SLIME_WIDTH && y >= monster.y && y <= monster.y + SLIME_HEIGHT){
+        if( x >= monster.x-BLOCK_WIDTH && x <= monster.x + SLIME_WIDTH +BLOCK_WIDTH && y >= monster.y && y <= monster.y + SLIME_HEIGHT){
             monster.hitted( this );
         }
     }

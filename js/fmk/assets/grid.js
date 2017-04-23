@@ -6,7 +6,7 @@ Grid.prototype.init = function(){
 
     this.addLine("top");
     
-    var randomHole = 1+ Math.ceil(Math.random() * (NB_BLOCKS_W-1-NB_HOLES-1));
+    var randomHole = 2+ Math.ceil(Math.random() * (NB_BLOCKS_W-1-NB_HOLES-1));
 
     var randomBottomPlatform;
     var randomSituation = false;

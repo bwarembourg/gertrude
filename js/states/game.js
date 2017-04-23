@@ -4,6 +4,7 @@ function Game() {
 
     this.levels = [];
     this.level = 0;
+    this.transition = false;
 
     this.jumpReleased = true;
     this.hero = new Hero(MARGIN+BLOCK_WIDTH, 8*BLOCK_HEIGHT);
@@ -290,6 +291,7 @@ Game.prototype.update = function() {
     }
     
     if( this.levels[this.level].finished ){
+        this.transition = true;
         this.level++;
         this.generateNewLevel();
     }
@@ -330,14 +332,14 @@ Game.prototype.reset = function() {
     this.music.play();
     this.hero = new Hero( MARGIN+BLOCK_WIDTH, 8*BLOCK_HEIGHT );
     this.levels = [];
-    this.generateNewLevel();
-    this.generateNewLevel();
     this.level = 0;
+    this.generateNewLevel();
+    this.generateNewLevel();
 };
 
 Game.prototype.generateNewLevel = function(){
     this.hero = new Hero(MARGIN+BLOCK_WIDTH, 8*BLOCK_HEIGHT);
     var level = new Level();
-    level.init();
+    level.init( this.level );
     this.levels.push(level);
 }

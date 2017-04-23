@@ -53,14 +53,15 @@ Line.prototype.generateWithPlatform = function(random){
 
 Line.prototype.generateFloor = function( random ){
     this.addBlock("corner_bl");
-    if(random==2){
+    this.addBlock("floor");
+    if(random==3){
         this.addBlock("floor_end");
     }
     else{
         this.addBlock("floor");
     }
     
-    for(var i=2; i < NB_BLOCKS_W-1; i++ ){
+    for(var i=3; i < NB_BLOCKS_W-1; i++ ){
         if(i == random-1 && NB_HOLES !=0 ){
             this.addBlock("floor_end");
         }
