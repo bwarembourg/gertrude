@@ -11,6 +11,7 @@ function Game() {
     this.floorNo = new FloorNo();
 
     this.background = ASSET_MANAGER.getCrop("background");
+    this.backgroundLevel = ASSET_MANAGER.getCrop("background_level")
     this.cornerTl = ASSET_MANAGER.getCrop("corner_tl");
     this.roof = ASSET_MANAGER.getCrop("roof");
     this.cornerTr = ASSET_MANAGER.getCrop("corner_tr");
@@ -73,191 +74,219 @@ function Game() {
 
     this.generateNewLevel();
     this.generateNewLevel();
+    this.levels[ this.level +1 ].y = -BCK_HEIGHT;
 };
 
 //
 // UPDATE
 //
 Game.prototype.update = function() {
-
-    this.background.render(BCK_X, BCK_Y);
-    
-    this.levels[this.level].update( this.hero );
-    for(var i=0; i< this.levels[this.level].grid.lines.length; i++){
-        for( var j=0; j< this.levels[this.level].grid.lines[i].blocks.length; j++){
-            var x = MARGIN + this.levels[this.level].x + j*BLOCK_WIDTH;
-            var y = this.levels[this.level].y + i*BLOCK_HEIGHT;
-            switch( this.levels[this.level].grid.lines[i].blocks[j].type ){
-                case "corner_tl" : this.cornerTl.render( x, y ); break;
-                case "roof": this.roof.render( x, y ); break;
-                case "corner_tr" : this.cornerTr.render( x, y ); break;
-                case "wall_left": this.wallLeft.render( x, y ); break;
-                case "wall_right": this.wallRight.render( x, y ); break;
-                case "corner_bl" : this.cornerBl.render( x, y); break;
-                case "corner_br" : this.cornerBr.render( x, y); break;
-                case "floor" : this.floor.render( x, y ); break;
-                case "floor_begin" : this.floorBegin.render( x, y); break;
-                case "floor_end" : this.floorEnd.render( x, y); break;
-                case "platform_begin" : this.platformBegin.render( x, y ); break;
-                case "platform_end" : this.platformEnd.render( x, y ); break;
-                case "platform" : this.platform.render( x, y ); break;
-                default: break;
-            }
-        }
-    }
-    //ITEMS
-    var button = this.levels[ this.level ].button;
-    if(!button.pushed)
-        this.buttonSprite.render( button.x, button.y );
-    else
-        this.buttonPushedSprite.render( button.x, button.y );
-    
-    var coffre = this.levels[ this.level ].coffre;
-    if(coffre.visible){
-        if(!coffre.open)
-            this.coffreSprite.render( coffre.x, coffre.y - BLOCK_WIDTH );
-        else
-            this.coffreOpenSprite.render( coffre.x, coffre.y - BLOCK_WIDTH );
-    }
-
-    var door = this.levels[ this.level ].door;
-    if(!door.open)
-        this.doorClosedSprite.render( door.x, door.y - BLOCK_HEIGHT );
-    else   
-        this.doorOpenSprite.render( door.x, door.y - BLOCK_HEIGHT);
-
-    //HERO
-    this.hero.update(this.key, this.levels[this.level]);
-    
-    if(this.hero.hittedAnim && this.hero.hittable){
-        var ended;
-        if(this.hero.goRight)
-            var ended = this.heroRightHit.playOnce( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT ); 
-        else
-            var ended = this.heroLeftHit.playOnce( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT ); 
-        if(ended == 'N'){
-            this.hero.hittedAnim = false;
-        }
+    if(this.transition){
         
-    }
-    else if(this.hero.died){
-        var ended;
-        if(this.hero.goRight)
-            var ended = this.heroRightDie.playOnce( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT ); 
-        else   
-            var ended = this.heroLeftDie.playOnce( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT ); 
-        if(ended == 'N'){
-            this.hero.hittable = false;
-            STATE_MANAGER.switchToState("gameover");
-        }
-    }
-    else if(this.hero.attacking){
-        var ended;
-        if(this.hero.goRight)
-            var ended = this.heroRightAttack.playOnce( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT );
-        else
-            var ended = this.heroLeftAttack.playOnce( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT );
-        if(ended == 'N'){
-            this.hero.attacking = false;
+
+        this.background.render(BCK_X, BCK_Y);
+        this.levels[this.level].update( this.hero );
+        var level = this.levels[ this.level ];
+        var nextLevel = this.levels[ this.level+1 ];
+
+        level.updateTransition(false);
+        if(level.transitionFinished){
+            this.transition = false;
+            this.level++;
+            this.generateNewLevel();
+            this.levels[ this.level +1].y = -BCK_HEIGHT;
         }
 
-    }
-    else if(!this.hero.jumping){
-        if(!this.hero.moving){
-            if(this.hero.goRight)
-                this.heroRightIdle.play( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
-            else
-                this.heroLeftIdle.play( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
-        }
-        else {
-            if(this.hero.goRight)
-                this.heroRightWalk.play( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
-            else   
-                this.heroLeftWalk.play( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
-        }
+        this.drawTransitionLevel(level, false);
+
+        nextLevel.updateTransition(true);
+        this.drawTransitionLevel(nextLevel, true);
     }
     else{
-        if(this.hero.goRight)
-            this.heroRightJump.render( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
-        else
-            this.heroLeftJump.render( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
-    }
-
-    //MONSTRES
-    for(var i=0; i< this.levels[this.level].monsters.length; i++){
-        var monster = this.levels[this.level].monsters[i];
-        monster.update(this.levels[this.level]);
-        if(monster.isSlime){
-            if(monster.hittedAnim && monster.hittable){
-                var ended;
-                if(monster.goRight)
-                    var ended = this.slimeRightHit.playOnce( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
-                else
-                    var ended = this.slimeLeftHit.playOnce( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
-                if(ended == 'N'){
-                    monster.hittedAnim = false;
+        this.background.render(BCK_X, BCK_Y);
+        
+        this.levels[this.level].update( this.hero );
+        for(var i=0; i< this.levels[this.level].grid.lines.length; i++){
+            for( var j=0; j< this.levels[this.level].grid.lines[i].blocks.length; j++){
+                var x = MARGIN + this.levels[this.level].x + j*BLOCK_WIDTH;
+                var y = this.levels[this.level].y + i*BLOCK_HEIGHT;
+                switch( this.levels[this.level].grid.lines[i].blocks[j].type ){
+                    case "corner_tl" : this.cornerTl.render( x, y ); break;
+                    case "roof": this.roof.render( x, y ); break;
+                    case "corner_tr" : this.cornerTr.render( x, y ); break;
+                    case "wall_left": this.wallLeft.render( x, y ); break;
+                    case "wall_right": this.wallRight.render( x, y ); break;
+                    case "corner_bl" : this.cornerBl.render( x, y); break;
+                    case "corner_br" : this.cornerBr.render( x, y); break;
+                    case "floor" : this.floor.render( x, y ); break;
+                    case "floor_begin" : this.floorBegin.render( x, y); break;
+                    case "floor_end" : this.floorEnd.render( x, y); break;
+                    case "platform_begin" : this.platformBegin.render( x, y ); break;
+                    case "platform_end" : this.platformEnd.render( x, y ); break;
+                    case "platform" : this.platform.render( x, y ); break;
+                    default: break;
                 }
             }
-            else if(monster.died){
-                monster.hittable =false;
-                if(monster.goRight)
-                    this.slimeRightDead.render( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
-                else
-                    this.slimeLeftDead.render( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
-            }
-            else{
-                if(monster.goRight)
-                    this.slimeRightWalk.play( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
-                else
-                    this.slimeLeftWalk.play( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
+        }
+        //ITEMS
+        var button = this.levels[ this.level ].button;
+        if(!button.pushed)
+            this.buttonSprite.render( button.x, button.y );
+        else
+            this.buttonPushedSprite.render( button.x, button.y );
+        
+        var coffre = this.levels[ this.level ].coffre;
+        if(coffre.visible){
+            if(!coffre.open)
+                this.coffreSprite.render( coffre.x, coffre.y - BLOCK_WIDTH );
+            else
+                this.coffreOpenSprite.render( coffre.x, coffre.y - BLOCK_WIDTH );
+        }
+
+        var door = this.levels[ this.level ].door;
+        if(!door.open)
+            this.doorClosedSprite.render( door.x, door.y - BLOCK_HEIGHT );
+        else   
+            this.doorOpenSprite.render( door.x, door.y - BLOCK_HEIGHT);
+
+        //HERO
+        this.hero.update(this.key, this.levels[this.level]);
+        
+        if(this.hero.hittedAnim && this.hero.hittable){
+            var ended;
+            if(this.hero.goRight)
+                var ended = this.heroRightHit.playOnce( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT ); 
+            else
+                var ended = this.heroLeftHit.playOnce( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT ); 
+            if(ended == 'N'){
+                this.hero.hittedAnim = false;
             }
             
         }
+        else if(this.hero.died){
+            var ended;
+            if(this.hero.goRight)
+                var ended = this.heroRightDie.playOnce( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT ); 
+            else   
+                var ended = this.heroLeftDie.playOnce( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT ); 
+            if(ended == 'N'){
+                this.hero.hittable = false;
+                STATE_MANAGER.switchToState("gameover");
+            }
+        }
+        else if(this.hero.attacking){
+            var ended;
+            if(this.hero.goRight)
+                var ended = this.heroRightAttack.playOnce( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT );
+            else
+                var ended = this.heroLeftAttack.playOnce( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT );
+            if(ended == 'N'){
+                this.hero.attacking = false;
+            }
+
+        }
+        else if(!this.hero.jumping){
+            if(!this.hero.moving){
+                if(this.hero.goRight)
+                    this.heroRightIdle.play( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
+                else
+                    this.heroLeftIdle.play( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
+            }
+            else {
+                if(this.hero.goRight)
+                    this.heroRightWalk.play( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
+                else   
+                    this.heroLeftWalk.play( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
+            }
+        }
         else{
-            if(monster.hittedAnim && monster.hittable){
-                var ended;
-                if(monster.goRight)
-                    var ended = this.skeletonRightHit.playOnce( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
-                else
-                    var ended = this.skeletonLeftHit.playOnce( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
-                if(ended == 'N'){
-                    monster.hittedAnim = false;
+            if(this.hero.goRight)
+                this.heroRightJump.render( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
+            else
+                this.heroLeftJump.render( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
+        }
+
+        //MONSTRES
+        for(var i=0; i< this.levels[this.level].monsters.length; i++){
+            var monster = this.levels[this.level].monsters[i];
+            monster.update(this.levels[this.level]);
+            if(monster.isSlime){
+                if(monster.hittedAnim && monster.hittable){
+                    var ended;
+                    if(monster.goRight)
+                        var ended = this.slimeRightHit.playOnce( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
+                    else
+                        var ended = this.slimeLeftHit.playOnce( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
+                    if(ended == 'N'){
+                        monster.hittedAnim = false;
+                    }
                 }
-            }
-            else if(monster.died){
-                monster.hittable = false;
-                if(monster.goRight)
-                    this.skeletonRightDead.render( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
-                else
-                    this.skeletonLeftDead.render( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
-            }
-            else{
-                if( !monster.heroInSight ){
-                    this.skeletonSprite.render( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                else if(monster.died){
+                    monster.hittable =false;
+                    if(monster.goRight)
+                        this.slimeRightDead.render( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
+                    else
+                        this.slimeLeftDead.render( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
                 }
                 else{
-                    if( monster.goRight )
-                        this.skeletonRightWalk.play(monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
-                    else   
-                        this.skeletonLeftWalk.play(monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                    if(monster.goRight)
+                        this.slimeRightWalk.play( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
+                    else
+                        this.slimeLeftWalk.play( monster.x - SLIME_WIDTH/2, monster.y - SLIME_HEIGHT);
+                }
+                
+            }
+            else{
+                if(monster.hittedAnim && monster.hittable){
+                    var ended;
+                    if(monster.goRight)
+                        var ended = this.skeletonRightHit.playOnce( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                    else
+                        var ended = this.skeletonLeftHit.playOnce( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                    if(ended == 'N'){
+                        monster.hittedAnim = false;
+                    }
+                }
+                else if(monster.died){
+                    monster.hittable = false;
+                    if(monster.goRight)
+                        this.skeletonRightDead.render( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                    else
+                        this.skeletonLeftDead.render( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                }
+                else{
+                    if( !monster.heroInSight ){
+                        this.skeletonSprite.render( monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                    }
+                    else{
+                        if( monster.goRight )
+                            this.skeletonRightWalk.play(monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                        else   
+                            this.skeletonLeftWalk.play(monster.x - SKELETON_WIDTH/2, monster.y - SKELETON_HEIGHT);
+                    }
                 }
             }
         }
+
+        //KEY
+        var key = this.levels[ this.level ].key;
+        if(key!= null && key.visible){
+            this.keySprite.render( key.x, key.y - BLOCK_HEIGHT);
+        }
+
+        if(this.hero.jumpReleased){
+            this.jumpReleased = true;
+        }
+        if(this.hero.y>BCK_HEIGHT){
+            STATE_MANAGER.switchToState("gameover");
+        }
+        
+
+        if( this.levels[this.level].finished ){
+            this.transition = true;
+        }
     }
 
-    //KEY
-    var key = this.levels[ this.level ].key;
-    if(key!= null && key.visible){
-        this.keySprite.render( key.x, key.y - BLOCK_HEIGHT);
-    }
-
-    if(this.hero.jumpReleased){
-        this.jumpReleased = true;
-    }
-    if(this.hero.y>BCK_HEIGHT){
-        STATE_MANAGER.switchToState("gameover");
-    }
-    
     //UI
     this.floorMarker.render(FLOOR_X, FLOOR_Y);
     var numbers = this.floorNo.getNumbers( this.level );
@@ -290,11 +319,6 @@ Game.prototype.update = function() {
             break;
     }
     
-    if( this.levels[this.level].finished ){
-        this.transition = true;
-        this.level++;
-        this.generateNewLevel();
-    }
 };
 
 Game.prototype.onKeyPressed = function(e) {
@@ -335,6 +359,7 @@ Game.prototype.reset = function() {
     this.level = 0;
     this.generateNewLevel();
     this.generateNewLevel();
+    this.levels[ this.level+1 ].y = -BCK_HEIGHT;
 };
 
 Game.prototype.generateNewLevel = function(){
@@ -342,4 +367,50 @@ Game.prototype.generateNewLevel = function(){
     var level = new Level();
     level.init( this.level );
     this.levels.push(level);
+}
+
+Game.prototype.drawTransitionLevel = function(level, next){
+        
+        this.backgroundLevel.render(level.x, level.y);
+
+        //BLOCKS
+        for(var i=0; i< level.grid.lines.length; i++){
+            for( var j=0; j< level.grid.lines[i].blocks.length; j++){
+                var x = MARGIN + level.x + j*BLOCK_WIDTH;
+                var y = level.y + i*BLOCK_HEIGHT;
+                switch( level.grid.lines[i].blocks[j].type ){
+                    case "corner_tl" : this.cornerTl.render( x, y ); break;
+                    case "roof": this.roof.render( x, y ); break;
+                    case "corner_tr" : this.cornerTr.render( x, y ); break;
+                    case "wall_left": this.wallLeft.render( x, y ); break;
+                    case "wall_right": this.wallRight.render( x, y ); break;
+                    case "corner_bl" : this.cornerBl.render( x, y); break;
+                    case "corner_br" : this.cornerBr.render( x, y); break;
+                    case "floor" : this.floor.render( x, y ); break;
+                    case "floor_begin" : this.floorBegin.render( x, y); break;
+                    case "floor_end" : this.floorEnd.render( x, y); break;
+                    case "platform_begin" : this.platformBegin.render( x, y ); break;
+                    case "platform_end" : this.platformEnd.render( x, y ); break;
+                    case "platform" : this.platform.render( x, y ); break;
+                    default: break;
+                }
+            }
+        }
+
+        //ITEM
+        if(next){
+            var button = level.button;
+            this.buttonSprite.render( level.x + button.x, level.y + button.y);
+            var door = level.door;
+            this.doorClosedSprite.render( level.x + door.x, level.y + door.y - BLOCK_HEIGHT );
+        }
+        else{
+            var button = level.button;
+            this.buttonPushedSprite.render( level.x + button.x, level.y + button.y);
+            var door = level.door;
+            this.doorOpenSprite.render( level.x + door.x, level.y + door.y - BLOCK_HEIGHT );
+            var coffre = level.coffre;
+            this.coffreOpenSprite.render( level.x + coffre.x, level.y + coffre.y  - BLOCK_HEIGHT );
+        }
+
 }

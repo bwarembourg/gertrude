@@ -7,6 +7,7 @@ CropManager.prototype.createCrops = function() {
     this.crops["title"] = new Crop("title", CANVAS_WIDTH, CANVAS_HEIGHT, 0, 0);
     this.crops["gameover"] = new Crop("gameover", CANVAS_WIDTH, CANVAS_HEIGHT, 0, 0);
     this.crops["background"] = new Crop("background", BCK_WIDTH, BCK_HEIGHT, 0, 0);
+    this.crops["background_level"] = new Crop("background_level", BCK_WIDTH, BCK_HEIGHT, 0, 0);
 
     this.crops["corner_tl"] = new Crop("chipset", BLOCK_WIDTH, BLOCK_HEIGHT, 0, 0);
     this.crops["roof"] = new Crop("chipset", BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH, 0);

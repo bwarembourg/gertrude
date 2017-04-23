@@ -10,6 +10,7 @@ AssetLoader.prototype.load = function() {
     
     //UI
     this._loadImage("background", "resources/img/background.png", BCK_WIDTH, BCK_HEIGHT);
+    this._loadImage("background_level", "resources/img/background_level.png", BCK_WIDTH, BCK_HEIGHT);
     this._loadImage("title", "resources/img/title.png", 512, 480);
     this._loadImage("gameover", "resources/img/gameover.png", 512, 480);
     this._loadImage("chipset", "resources/img/chipset.png", 288, 144);

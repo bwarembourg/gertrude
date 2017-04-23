@@ -12,10 +12,12 @@ function Level(){
     this.y =0;
 
     this.finished = false;
+    this.transitionFinished = false;
 }
 
 Level.prototype.setDifficulty = function(level){
-
+    NB_SLIME =0;
+    NB_SKELETONS =0;
     if(level<2){
         NB_SLIMES = 1;
         NB_PLATFORM = 6;
@@ -34,7 +36,7 @@ Level.prototype.setDifficulty = function(level){
         NB_HOLES = 5;
         NB_PLATFORM = 5;
         NB_SLIMES = 1;
-        NB_SKELETON = 1;
+        NB_SKELETONS = 1;
     }
     else if(level < 10){
         NB_SLIMES = 3;
@@ -43,7 +45,7 @@ Level.prototype.setDifficulty = function(level){
         NB_PLATFORM = 4;
     }
     else if(level < 14){
-        NB_SKELETON = 2;
+        NB_SKELETONS = 2;
         NB_SLIME = 1;
     }
     else if(level < 16){
@@ -207,8 +209,16 @@ Level.prototype.collidesItem = function( hero ){
 Level.prototype.heroAttMonster = function( x, y){
     for(var l=0; l<this.monsters.length; l++){
         var monster = this.monsters[l];
-        if( x >= monster.x-BLOCK_WIDTH && x <= monster.x + SLIME_WIDTH +BLOCK_WIDTH && y >= monster.y && y <= monster.y + SLIME_HEIGHT){
+        if( x >= monster.x-BLOCK_WIDTH && x <= monster.x + SLIME_WIDTH +BLOCK_WIDTH &&
+             y >= monster.y - BLOCK_HEIGHT && y <= monster.y + SLIME_HEIGHT + BLOCK_HEIGHT){
             monster.hitted( this );
         }
+    }
+}
+
+Level.prototype.updateTransition = function( next){
+    this.y +=10;
+    if(this.y>= BCK_HEIGHT && !next){
+        this.transitionFinished = true;
     }
 }
