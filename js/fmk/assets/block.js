@@ -7,6 +7,7 @@ function Block(){
     this.isFloor = false;
     this.platform = false;
     this.player = false;
+    this.hasMonster = false;
 }
 
 Block.prototype.init = function(type){

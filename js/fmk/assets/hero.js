@@ -3,6 +3,10 @@ function Hero(x, y){
     this.y = y;
     this.hitBox = new HitBox(x, y);
     
+    this.restCounter=0;
+    this.attackCounter=0;
+    this.hitted=false;
+    this.hittedAnim = false;
     this.goRight = true;
     this.falling = false;
     //JUMPING PROPERTIES
@@ -10,26 +14,36 @@ function Hero(x, y){
     this.jumpingUp = true;
     this.firstJump = false;
     this.jumpReleased = true;
+    this.attacking = false;
+    this.died = false;
+    this.hittable = true;
 
     this.initialY;
+    this.life = 3;
 }
 
 Hero.prototype.update = function(key, level){
+    
+    
     var newX = this.x; 
     var newY = this.y;
 
     switch(key){
         //LEFT
         case 37 : 
+            this.moving = true;
             this.goRight = false;
             newX -= SPEED_X; 
             break;
         //RIGHT
         case 39 : 
+            this.moving = true;
             this.goRight = true;
             newX += SPEED_X; 
             break;
-        default: break;
+        default: 
+            this.moving = false;
+            break;
     }
 
     var newY = this.getNewYJump();
@@ -57,8 +71,21 @@ Hero.prototype.update = function(key, level){
         this.falling = true;
         this.y += SPEED_JUMP;
     }
-    else{
+    
+    //COLLIDES WITH MONSTERS
+    if(this.hitted){
+        this.restCounter++;
+        if(this.restCounter>=REST_TIME){
+            this.hitted=false;
+            this.restCounter=0;
+        }
     }
+    else{
+        level.collidesHero(this);
+    }
+
+    //COLLIDES WITH ITEM
+    level.collidesItem(this);
 
     this.hitBox.update(this.x, this.y);
 }
@@ -148,6 +175,7 @@ Hero.prototype.isOnFloor = function(x, y, level){
 }
 
 Hero.prototype.getNewYJump = function(){
+
     if(this.firstJump){
         this.initialY = this.y;
         this.firstJump = false;
@@ -179,4 +207,20 @@ Hero.prototype.getNewYJump = function(){
     else {
         return this.y;
     }
+}
+
+Hero.prototype.attack = function(level){
+    this.attacking = true;
+
+    var xAtt;
+    var yAtt = this.y + 15;
+
+    if( this.goRight){
+        var xAtt = this.x + HERO_WIDTH+15;
+    }
+    else{
+        var xAtt = this.x - 15;
+    }
+
+    level.heroAttMonster(xAtt, yAtt);
 }

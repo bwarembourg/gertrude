@@ -108,7 +108,7 @@ Grid.prototype.countBlocksWithFloor = function(){
     var counter =0;
     for(var i=0; i < this.lines.length; i++){
         for(var j=0; j < this.lines[i].blocks.length; j++){
-            if(this.lines[i].blocks[j].isFloor && !this.lines[i].blocks[j].isPlayer)
+            if(this.lines[i].blocks[j].isFloor && !this.lines[i].blocks[j].isPlayer && !this.lines[i].blocks[j].hasMonster)
                 counter++;
         }
     }
