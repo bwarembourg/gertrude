@@ -2,7 +2,9 @@ function Coffre(x,y){
     this.x = x;
     this.y = y;
     this.visible = false;
+    this.visibleAnim = true;
     this.open = false;
+    this.openAnim = true;
     this.openable = false;
 }
 

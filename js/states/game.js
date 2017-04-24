@@ -33,9 +33,15 @@ function Game() {
     this.buttonPushedSprite = ASSET_MANAGER.getCrop("buttonpushed");
     this.coffreSprite = ASSET_MANAGER.getCrop("coffre");
     this.coffreOpenSprite = ASSET_MANAGER.getCrop("coffreopen");
+    this.coffreVisibleAnim = ASSET_MANAGER.getAnimation("coffre_visible_anim")
+    this.coffreOpenAnim = ASSET_MANAGER.getAnimation("coffre_open_anim")
+
     this.doorClosedSprite = ASSET_MANAGER.getCrop("doorclosed");
     this.doorOpenSprite = ASSET_MANAGER.getCrop("dooropen");
+    this.doorAnim = ASSET_MANAGER.getAnimation("door_anim");
+
     this.keySprite = ASSET_MANAGER.getCrop("key");
+    this.keyAnim = ASSET_MANAGER.getAnimation("key_anim");
 
     this.supportHeart = ASSET_MANAGER.getCrop("supportheart");
     this.floorMarker = ASSET_MANAGER.getCrop("floormarker");
@@ -148,15 +154,33 @@ Game.prototype.update = function() {
             this.buttonPushedSprite.render( button.x, button.y );
         
         var coffre = this.levels[ this.level ].coffre;
-        if(coffre.visible){
-            if(!coffre.open)
+        if(coffre.visible ){
+            if(coffre.visibleAnim){
+                var ended = this.coffreVisibleAnim.playOnce( coffre.x, coffre.y - BLOCK_WIDTH );
+                if(ended){
+                    coffre.visibleAnim = false;
+                }
+            }
+            else if(coffre.openAnim && coffre.open){
+                var ended = this.coffreOpenAnim.playOnce( coffre.x, coffre.y - BLOCK_WIDTH );
+                if(ended){
+                    coffre.openAnim = false;
+                }
+            }
+            else if(!coffre.open)
                 this.coffreSprite.render( coffre.x, coffre.y - BLOCK_WIDTH );
             else
                 this.coffreOpenSprite.render( coffre.x, coffre.y - BLOCK_WIDTH );
         }
 
         var door = this.levels[ this.level ].door;
-        if(!door.open)
+        if(door.open && door.openAnim){
+            var ended = this.doorAnim.playOnce(door.x, door.y - BLOCK_HEIGHT);
+            if(ended){
+                door.openAnim=false;
+            }
+        }
+        else if(!door.open)
             this.doorClosedSprite.render( door.x, door.y - BLOCK_HEIGHT );
         else   
             this.doorOpenSprite.render( door.x, door.y - BLOCK_HEIGHT);
@@ -288,10 +312,18 @@ Game.prototype.update = function() {
 
         //KEY
         var key = this.levels[ this.level ].key;
-        if(key!= null && key.visible){
-            this.keySprite.render( key.x, key.y - BLOCK_HEIGHT);
+        if(key!= null){
+            if(key.visibleAnim){
+                var ended = this.keyAnim.playOnce( key.x, key.y - BLOCK_HEIGHT);
+                if(ended){
+                    key.visibleAnim=false;
+                }
+            }
+            else if(key.visible){
+                this.keySprite.render( key.x, key.y - BLOCK_HEIGHT);
+            }
         }
-
+        
         if(this.hero.jumpReleased){
             this.jumpReleased = true;
         }
@@ -557,5 +589,63 @@ Game.prototype.drawSsLevel = function(){
                 }
             }
         }
+
+        //HERO
+        this.hero.update(this.key, this.levels[this.level]);
+        
+        if(this.hero.hittedAnim && this.hero.hittable){
+            var ended;
+            if(this.hero.goRight)
+                var ended = this.heroRightHit.playOnce(level.x + this.hero.x - 51,level.y + this.hero.y - BLOCK_HEIGHT ); 
+            else
+                var ended = this.heroLeftHit.playOnce( level.x + this.hero.x - 51, level.y + this.hero.y - BLOCK_HEIGHT ); 
+            if(ended == 'N'){
+                this.hero.hittedAnim = false;
+            }
+            
+        }
+        else if(this.hero.died){
+            var ended;
+            if(this.hero.goRight)
+                var ended = this.heroRightDie.playOnce( level.x +this.hero.x - 51, level.y +this.hero.y - BLOCK_HEIGHT ); 
+            else   
+                var ended = this.heroLeftDie.playOnce( level.x + this.hero.x - 51, level.y + this.hero.y - BLOCK_HEIGHT ); 
+            if(ended == 'N'){
+                this.hero.hittable = false;
+                STATE_MANAGER.switchToState("gameover");
+            }
+        }
+        else if(this.hero.attacking){
+            var ended;
+            if(this.hero.goRight)
+                var ended = this.heroRightAttack.playOnce( level.x+ this.hero.x - 51, level.y +this.hero.y - BLOCK_HEIGHT );
+            else
+                var ended = this.heroLeftAttack.playOnce( level.x +this.hero.x - 51, level.y + this.hero.y - BLOCK_HEIGHT );
+            if(ended == 'N'){
+                this.hero.attacking = false;
+            }
+
+        }
+        else if(!this.hero.jumping){
+            if(!this.hero.moving){
+                if(this.hero.goRight)
+                    this.heroRightIdle.play( level.x +this.hero.x - 51, level.y + this.hero.y - BLOCK_HEIGHT);
+                else
+                    this.heroLeftIdle.play( level.x + this.hero.x - 51, level.y + this.hero.y - BLOCK_HEIGHT);
+            }
+            else {
+                if(this.hero.goRight)
+                    this.heroRightWalk.play( level.x + this.hero.x - 51, level.y + this.hero.y - BLOCK_HEIGHT);
+                else   
+                    this.heroLeftWalk.play( level.x + this.hero.x - 51, level.y + this.hero.y - BLOCK_HEIGHT);
+            }
+        }
+        else{
+            if(this.hero.goRight)
+                this.heroRightJump.render( level.x + this.hero.x - 51, level.y + this.hero.y - BLOCK_HEIGHT);
+            else
+                this.heroLeftJump.render( level.x + this.hero.x - 51, level.y + this.hero.y - BLOCK_HEIGHT);
+        }
+
         
 }

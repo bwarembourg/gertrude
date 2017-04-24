@@ -43,11 +43,40 @@ CropManager.prototype.createCrops = function() {
 
     this.crops["button"] = new Crop("button", BLOCK_WIDTH, BLOCK_HEIGHT, 0, 0);
     this.crops["buttonpushed"] = new Crop("button", BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH, 0);
+    
     this.crops["doorclosed"] = new Crop("door", 2*BLOCK_WIDTH, 2*BLOCK_HEIGHT, 0, 0);
-    this.crops["dooropen"] = new Crop("door", 2*BLOCK_WIDTH, 2*BLOCK_HEIGHT, 9*2*BLOCK_WIDTH, 0);
+    this.crops["door2"] = new Crop("door", 2*BLOCK_WIDTH, 2*BLOCK_HEIGHT, 1*2*BLOCK_WIDTH, 0); 
+    this.crops["door3"] = new Crop("door", 2*BLOCK_WIDTH, 2*BLOCK_HEIGHT, 2*2*BLOCK_WIDTH, 0); 
+    this.crops["door4"] = new Crop("door", 2*BLOCK_WIDTH, 2*BLOCK_HEIGHT, 3*2*BLOCK_WIDTH, 0); 
+    this.crops["door5"] = new Crop("door", 2*BLOCK_WIDTH, 2*BLOCK_HEIGHT, 4*2*BLOCK_WIDTH, 0); 
+    this.crops["dooropen"] = new Crop("door", 2*BLOCK_WIDTH, 2*BLOCK_HEIGHT, 5*2*BLOCK_WIDTH, 0);
+
+    this.crops["coffre1"] = new Crop("coffre", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 0*BLOCK_WIDTH, 0);
+    this.crops["coffre2"] = new Crop("coffre", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 1*BLOCK_WIDTH, 0);
+    this.crops["coffre3"] = new Crop("coffre", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 2*BLOCK_WIDTH, 0);
+    this.crops["coffre4"] = new Crop("coffre", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 3*BLOCK_WIDTH, 0);
+    this.crops["coffre5"] = new Crop("coffre", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 4*BLOCK_WIDTH, 0);
+    this.crops["coffre6"] = new Crop("coffre", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 5*BLOCK_WIDTH, 0);
     this.crops["coffre"] = new Crop("coffre", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 6*BLOCK_WIDTH, 0);
+    this.crops["coffre8"] = new Crop("coffre", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 7*BLOCK_WIDTH, 0);
+    this.crops["coffre9"] = new Crop("coffre", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 8*BLOCK_WIDTH, 0);
+    this.crops["coffre10"] = new Crop("coffre", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 9*BLOCK_WIDTH, 0);
+    this.crops["coffre11"] = new Crop("coffre", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 10*BLOCK_WIDTH, 0);
     this.crops["coffreopen"] = new Crop("coffre", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 11*BLOCK_WIDTH, 0);
+
+
+    this.crops["key_1"] = new Crop("key", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 0, 0);
+    this.crops["key_2"] = new Crop("key", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 1*BLOCK_WIDTH, 0);
+    this.crops["key_3"] = new Crop("key", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 2*BLOCK_WIDTH, 0);
+    this.crops["key_4"] = new Crop("key", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 3*BLOCK_WIDTH, 0);
+    this.crops["key_5"] = new Crop("key", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 4*BLOCK_WIDTH, 0);
+    this.crops["key_6"] = new Crop("key", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 5*BLOCK_WIDTH, 0);
+    this.crops["key_7"] = new Crop("key", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 6*BLOCK_WIDTH, 0);
     this.crops["key"] = new Crop("key", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 7*BLOCK_WIDTH, 0);
+    this.crops["key_9"] = new Crop("key", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 8*BLOCK_WIDTH, 0);
+    this.crops["key_10"] = new Crop("key", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 9*BLOCK_WIDTH, 0);
+    this.crops["key_11"] = new Crop("key", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 10*BLOCK_WIDTH, 0);
+    this.crops["key_12"] = new Crop("key", BLOCK_WIDTH, 2*BLOCK_HEIGHT, 11*BLOCK_WIDTH, 0);
 
     this.crops["hero_right_idle_1"] = new Crop("heroright", 150, 96, 0, 0);
     this.crops["hero_right_idle_2"] = new Crop("heroright", 150, 96, 150, 0);

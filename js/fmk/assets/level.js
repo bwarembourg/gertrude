@@ -306,7 +306,8 @@ Level.prototype.heroAttMonster = function( x, y){
     var monsterHitted = false;
     for(var l=0; l<this.monsters.length; l++){
         var monster = this.monsters[l];
-        if( x >= monster.x-BLOCK_WIDTH && x <= monster.x + SLIME_WIDTH +BLOCK_WIDTH &&
+        if( !monster.died &&
+             x >= monster.x-BLOCK_WIDTH && x <= monster.x + SLIME_WIDTH +BLOCK_WIDTH &&
              y >= monster.y - BLOCK_HEIGHT && y <= monster.y + SLIME_HEIGHT + BLOCK_HEIGHT){
             monster.hitted( this );
             this.screenshake=true;
@@ -314,7 +315,7 @@ Level.prototype.heroAttMonster = function( x, y){
             monsterHitted=true;
         }
     }
-    if(!monsterHitted && x >= this.key.x-BLOCK_WIDTH && x <= this.key.x + SLIME_WIDTH +BLOCK_WIDTH &&
+    if(this.key != null && !monsterHitted && x >= this.key.x-BLOCK_WIDTH && x <= this.key.x + SLIME_WIDTH +BLOCK_WIDTH &&
         y >= this.key.y - BLOCK_HEIGHT && y <= this.key.y + SLIME_HEIGHT + BLOCK_HEIGHT){
         if(this.key!=null && this.key.visible){
             this.key.onCollide( this );

@@ -140,6 +140,49 @@ AnimManager.prototype.createAnimations = function() {
     frames[5] = new Frame(ASSET_MANAGER.getCrop("skeleton_left_hit_6"), 2);
     this.animations["skeleton_left_hit"] = new Anim(frames);
 
+
+    frames = [];
+    frames[0] = new Frame(ASSET_MANAGER.getCrop("key_1"), 2);
+    frames[1] = new Frame(ASSET_MANAGER.getCrop("key_2"), 2);
+    frames[2] = new Frame(ASSET_MANAGER.getCrop("key_3"), 2);
+    frames[3] = new Frame(ASSET_MANAGER.getCrop("key_4"), 2);
+    frames[4] = new Frame(ASSET_MANAGER.getCrop("key_5"), 2);
+    frames[5] = new Frame(ASSET_MANAGER.getCrop("key_6"), 2);
+    frames[6] = new Frame(ASSET_MANAGER.getCrop("key_7"), 2);
+    frames[7] = new Frame(ASSET_MANAGER.getCrop("key"), 2);
+    frames[8] = new Frame(ASSET_MANAGER.getCrop("key_9"), 2);
+    frames[9] = new Frame(ASSET_MANAGER.getCrop("key_10"), 2);
+    frames[10] = new Frame(ASSET_MANAGER.getCrop("key_11"), 2);
+    frames[11] = new Frame(ASSET_MANAGER.getCrop("key_12"), 2);
+    this.animations["key_anim"] = new Anim(frames);
+
+    frames = [];
+    frames[0] = new Frame(ASSET_MANAGER.getCrop("doorclosed"), 2);
+    frames[1] = new Frame(ASSET_MANAGER.getCrop("door2"), 2);
+    frames[2] = new Frame(ASSET_MANAGER.getCrop("door3"), 2);
+    frames[3] = new Frame(ASSET_MANAGER.getCrop("door4"), 2);
+    frames[4] = new Frame(ASSET_MANAGER.getCrop("door5"), 2);
+    frames[5] = new Frame(ASSET_MANAGER.getCrop("dooropen"), 2);
+    this.animations["door_anim"] = new Anim(frames);
+
+    frames = [];
+    frames[0] = new Frame(ASSET_MANAGER.getCrop("coffre1"), 2);
+    frames[1] = new Frame(ASSET_MANAGER.getCrop("coffre2"), 2);
+    frames[2] = new Frame(ASSET_MANAGER.getCrop("coffre3"), 2);
+    frames[3] = new Frame(ASSET_MANAGER.getCrop("coffre4"), 2);
+    frames[4] = new Frame(ASSET_MANAGER.getCrop("coffre5"), 2);
+    frames[5] = new Frame(ASSET_MANAGER.getCrop("coffre6"), 2);
+    frames[6] = new Frame(ASSET_MANAGER.getCrop("coffre"), 2);
+    this.animations["coffre_visible_anim"] = new Anim(frames);
+
+    frames = [];
+    frames[0] = new Frame(ASSET_MANAGER.getCrop("coffre8"), 2);
+    frames[1] = new Frame(ASSET_MANAGER.getCrop("coffre9"), 2);
+    frames[2] = new Frame(ASSET_MANAGER.getCrop("coffre10"), 2);
+    frames[3] = new Frame(ASSET_MANAGER.getCrop("coffre11"), 2);
+    frames[4] = new Frame(ASSET_MANAGER.getCrop("coffreopen"), 2);
+    this.animations["coffre_open_anim"] = new Anim(frames);
+
 };
 
 AnimManager.prototype.getAnimation = function(name) {
