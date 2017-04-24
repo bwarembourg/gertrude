@@ -11,6 +11,7 @@ function Game() {
     this.hero = new Hero(MARGIN+BLOCK_WIDTH, 8*BLOCK_HEIGHT);
     this.floorNo = new FloorNo();
 
+    this.tuto = ASSET_MANAGER.getCrop("tuto");
     this.background = ASSET_MANAGER.getCrop("background");
     this.backgroundLevel = ASSET_MANAGER.getCrop("background_level")
     this.cornerTl = ASSET_MANAGER.getCrop("corner_tl");
@@ -368,6 +369,9 @@ Game.prototype.update = function() {
             this.heartFull.render(LIFE_X+2*HEART_WIDTH, LIFE_Y);
             break;
     }
+
+    this.tuto.render(0, BCK_HEIGHT-5);
+
     
 };
 

@@ -9,6 +9,7 @@ AssetLoader.prototype.load = function() {
     LOGGER.log("loading assets");
     
     //UI
+    this._loadImage("tuto", "resources/img/tuto.png", BCK_WIDTH, 2*BLOCK_HEIGHT);
     this._loadImage("background", "resources/img/background.png", BCK_WIDTH, BCK_HEIGHT);
     this._loadImage("background_level", "resources/img/background_level.png", BCK_WIDTH, BCK_HEIGHT);
     this._loadImage("title", "resources/img/title.png", 512, 480);
