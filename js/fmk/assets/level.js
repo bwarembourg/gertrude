@@ -22,10 +22,10 @@ function Level(){
 }
 
 Level.prototype.setDifficulty = function(level){
-    NB_SLIME =0;
-    NB_SKELETONS =0;
-    NB_PICS =0;
+    
     if(level<1){
+        NB_SKELETONS =0;
+        NB_PICS =0;
         NB_SLIMES = 1;
         NB_PLATFORM = 6;
         NB_HOLES = 2;
@@ -98,6 +98,11 @@ Level.prototype.setDifficulty = function(level){
     }
     else if(level < 22){
         NB_SKELETONS = 3;
+    }
+    else {
+        NB_SKELETONS = 3;
+        NB_SLIMES =5
+        NB_PICS = 2;
     }
 
 }
