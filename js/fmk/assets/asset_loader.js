@@ -35,10 +35,6 @@ AssetLoader.prototype.load = function() {
     this._loadImage("skeletonright", "resources/img/skeletonright.png", 864, 96);
     this._loadImage("skeletonleft", "resources/img/skeletonleft.png", 9*2*SKELETON_WIDTH, 2*SKELETON_HEIGHT);
 
-    this._loadImage("smoke_walk_left", "resources/img/smoke_walk_left.png", 756, 48);
-    this._loadImage("smoke_walk_right", "resources/img/smoke_walk_right.png", 756, 48);
-    this._loadImage("smoke_jump","resources/img/smoke_jump",1392,48);
-
 };
 
 AssetLoader.prototype.getImage = function(name) {

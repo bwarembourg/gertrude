@@ -74,9 +74,6 @@ function Game() {
     this.skeletonLeftHit = ASSET_MANAGER.getAnimation("skeleton_left_hit");
     this.skeletonRightDead = ASSET_MANAGER.getCrop("skeleton_right_hit_6");
     this.skeletonLeftDead = ASSET_MANAGER.getCrop("skeleton_left_hit_6");
-
-    this.smokeWalkLeft = ASSET_MANAGER.getAnimation("smoke_walk_left");
-    this.smokeWalkRight = ASSET_MANAGER.getAnimation("smoke_walk_right");
     
 
     this.music = new Audio('resources/sounds/music.mp3');
@@ -233,14 +230,10 @@ Game.prototype.update = function() {
                     this.heroLeftIdle.play( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
             }
             else {
-                if(this.hero.goRight){
+                if(this.hero.goRight)
                     this.heroRightWalk.play( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
-                    this.smokeWalkRight.play( this.hero.x - 126, this.hero.y);
-                }
-                else{   
+                else   
                     this.heroLeftWalk.play( this.hero.x - 51, this.hero.y - BLOCK_HEIGHT);
-                    this.smokeWalkLeft.play( this.hero.x + BLOCK_WIDTH, this.hero.y)
-                }
             }
         }
         else{
