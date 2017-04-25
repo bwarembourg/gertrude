@@ -183,6 +183,25 @@ AnimManager.prototype.createAnimations = function() {
     frames[4] = new Frame(ASSET_MANAGER.getCrop("coffreopen"), 2);
     this.animations["coffre_open_anim"] = new Anim(frames);
 
+    frames = [];
+    frames[0] = new Frame(ASSET_MANAGER.getCrop("smoke_walk_left_1"), 2);
+    frames[1] = new Frame(ASSET_MANAGER.getCrop("smoke_walk_left_2"), 2);
+    frames[2] = new Frame(ASSET_MANAGER.getCrop("smoke_walk_left_3"), 2);
+    frames[3] = new Frame(ASSET_MANAGER.getCrop("smoke_walk_left_4"), 2);
+    frames[4] = new Frame(ASSET_MANAGER.getCrop("smoke_walk_left_5"), 2);
+    frames[5] = new Frame(ASSET_MANAGER.getCrop("smoke_walk_left_6"), 2);
+    this.animations["smoke_walk_left"] = new Anim(frames);
+
+    frames = [];
+    frames[0] = new Frame(ASSET_MANAGER.getCrop("smoke_walk_right_1"), 2);
+    frames[1] = new Frame(ASSET_MANAGER.getCrop("smoke_walk_right_2"), 2);
+    frames[2] = new Frame(ASSET_MANAGER.getCrop("smoke_walk_right_3"), 2);
+    frames[3] = new Frame(ASSET_MANAGER.getCrop("smoke_walk_right_4"), 2);
+    frames[4] = new Frame(ASSET_MANAGER.getCrop("smoke_walk_right_5"), 2);
+    frames[5] = new Frame(ASSET_MANAGER.getCrop("smoke_walk_right_6"), 2);
+    this.animations["smoke_walk_right"] = new Anim(frames);
+
+
 };
 
 AnimManager.prototype.getAnimation = function(name) {

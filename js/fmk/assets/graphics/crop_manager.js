@@ -181,7 +181,20 @@ CropManager.prototype.createCrops = function() {
     this.crops["skeleton_left_hit_4"] = new Crop("skeletonleft", 96, 96, 6*2*SKELETON_WIDTH, 0);
     this.crops["skeleton_left_hit_5"] = new Crop("skeletonleft", 96, 96, 7*2*SKELETON_WIDTH, 0);
     this.crops["skeleton_left_hit_6"] = new Crop("skeletonleft", 96, 96, 8*2*SKELETON_WIDTH, 0);
+
+    this.crops["smoke_walk_left_1"] = new Crop("smoke_walk_left", 126, 48, 0*126, 0);
+    this.crops["smoke_walk_left_2"] = new Crop("smoke_walk_left", 126, 48, 1*126, 0);
+    this.crops["smoke_walk_left_3"] = new Crop("smoke_walk_left", 126, 48, 2*126, 0);
+    this.crops["smoke_walk_left_4"] = new Crop("smoke_walk_left", 126, 48, 3*126, 0);
+    this.crops["smoke_walk_left_5"] = new Crop("smoke_walk_left", 126, 48, 4*126, 0);
+    this.crops["smoke_walk_left_6"] = new Crop("smoke_walk_left", 126, 48, 5*126, 0);
     
+    this.crops["smoke_walk_right_1"] = new Crop("smoke_walk_right", 126, 48, 0*126, 0);
+    this.crops["smoke_walk_right_2"] = new Crop("smoke_walk_right", 126, 48, 1*126, 0);
+    this.crops["smoke_walk_right_3"] = new Crop("smoke_walk_right", 126, 48, 2*126, 0);
+    this.crops["smoke_walk_right_4"] = new Crop("smoke_walk_right", 126, 48, 3*126, 0);
+    this.crops["smoke_walk_right_5"] = new Crop("smoke_walk_right", 126, 48, 4*126, 0);
+    this.crops["smoke_walk_right_6"] = new Crop("smoke_walk_right", 126, 48, 5*126, 0);    
 
 };
 
