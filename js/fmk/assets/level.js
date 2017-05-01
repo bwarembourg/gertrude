@@ -151,7 +151,6 @@ Level.prototype.placePic = function(){
             }
         }
     }
-    console.log(" x :"+x+" y :"+y);
     var pic = new Pic(x, y);
     this.pics.push(pic);
 }
@@ -334,7 +333,7 @@ Level.prototype.updateScreenshake = function( type){
     var power=10;
     switch(type){
         case "hit": power=10; break;
-        case "att" : power=2; break;
+        case "att" : power=5; break;
     }
 
     if( this.goRight){
@@ -354,7 +353,7 @@ Level.prototype.updateScreenshake = function( type){
         this.counterSs++;
     }
 
-    if(this.counterSs==2){
+    if(this.counterSs==4){
         this.counterSs=0;
         this.goRight=true;
         return true;

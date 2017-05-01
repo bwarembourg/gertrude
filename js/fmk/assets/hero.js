@@ -27,7 +27,6 @@ Hero.prototype.update = function(key, level){
     if(!this.died){
         var newX = this.x; 
         var newY = this.y;
-
         switch(key){
             //LEFT
             case 37 : 
@@ -49,11 +48,19 @@ Hero.prototype.update = function(key, level){
         var newY = this.getNewYJump();
 
         //COLLIDES WITH WALLS
-        if(!this.collidesWWalls( newX, this.y, level )){
+        if(!this.collidesWWalls( newX, this.y, level )){    
             this.x = newX;
         }
 
         //PLATFORM AND JUMP STUFF
+        if(!this.jumping){
+            //ERREUR CORRECTION
+            var block = level.grid.getBlock(this.x, this.y+HERO_HEIGHT-10);
+            if(block!=null){
+                newY=block.y;
+            }
+        }
+
         if( !this.collidesWPlatform( this.x, newY, level ) || 
             this.jumpingUp ||
             this.collidesPlatformFromBottom( this.x, newY, level )
@@ -212,11 +219,21 @@ Hero.prototype.getNewYJump = function(){
         }
 
         if(this.jumpingUp){
-            var newY = this.y - SPEED_JUMP;
+            if(this.y <= this.initialY - (JUMP_HEIGHT*(3/5)*BLOCK_HEIGHT)){
+                var newY = this.y - (SPEED_JUMP/2);
+            }
+            else {
+                var newY = this.y - SPEED_JUMP;
+            }
             return newY;
         }
         else{
-            var newY = this.y + SPEED_JUMP;
+            if(this.y <= this.initialY - (JUMP_HEIGHT*(3/5)*BLOCK_HEIGHT)){
+                var newY = this.y + (SPEED_JUMP/2);
+            }
+            else {
+                var newY = this.y + SPEED_JUMP;
+            }
             return newY;
         }
 
