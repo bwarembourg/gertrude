@@ -387,7 +387,7 @@ Game.prototype.onKeyPressed = function(e) {
     else if(e.which == 88){
         this.hero.attack( this.levels[ this.level ] );
     }
-    else if(e.which != 38){
+    else{
         this.key = e.which;
     }
         
